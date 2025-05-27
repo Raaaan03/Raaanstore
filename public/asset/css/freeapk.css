@@ -1,0 +1,163 @@
+html, body {
+      margin: 0; padding: 0; overflow-x: hidden;
+      background: #0d0d0d; color: #fff;
+      font-family: 'Inter', sans-serif;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* --- Header --- */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 10px;
+      margin-top:5px;
+      margin-left:-15px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .header .back-arrow {
+      font-size: 1.4rem;
+      padding: 6px;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+    .header .back-arrow:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    /* --- Main container --- */
+    #mainContent {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      padding-bottom: 60px;
+      overflow-y: auto;
+      animation: slideUpFade .5s forwards;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 0 20px;
+      flex: 1;
+    }
+
+    /* --- Loader --- */
+    .loader-wrapper {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(18,18,18,.85); backdrop-filter: blur(6px);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      z-index: 11000;
+    }
+    .loader {
+      width: 48px; height: 48px; background: #1313f9;
+      transform: rotateX(65deg) rotate(45deg);
+      animation: layers1 1s linear infinite alternate;
+      position: relative; margin-bottom: 10px;
+    }
+    .loader:after {
+      content: ""; position: absolute; inset: 0;
+      background: rgba(255,255,255,.7);
+      animation: layerTr 1s linear infinite alternate;
+    }
+    @keyframes layers1 {
+      0% { box-shadow: 0 0 0 0 }
+      100% { box-shadow: 20px 20px 0 -4px }
+    }
+    @keyframes layerTr {
+      0% { transform: translate(0,0) scale(1) }
+      100% { transform: translate(-25px,-25px) scale(1) }
+    }
+    .loader-text { font-size: .9rem; color: #ccc; text-align: center; }
+
+    /* --- Fade-up animation --- */
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(20px) }
+      to   { opacity: 1; transform: translateY(0) }
+    }
+
+    /* --- File list --- */
+    .file-box {
+      background: #121212; border: 1px solid #444;
+      border-radius: 6px; padding: 12px 16px; margin: 12px 0;
+      cursor: pointer; transition: background .2s;
+      animation: slideUpFade .5s forwards;
+    }
+    .file-box:hover { background: #1e1e1e }
+    .file-name {
+      font-size: 1rem; margin-bottom: 6px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .file-url {
+      font-size: .85rem; color: #888; word-break: break-all;
+    }
+
+    /* --- Pagination --- */
+    #pagination {
+      display: flex; justify-content: center; gap: 8px; margin: 12px 0;
+    }
+    #pagination button {
+      padding: 4px 8px; border: 1px solid #444;
+      background: #1e1e1e; color: #fff; border-radius: 4px;
+      cursor: pointer;
+    }
+    #pagination button.active {
+      background: #007bff; border-color: #007bff; color: #000;
+    }
+
+    /* --- Popup --- */
+    .overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,.5); backdrop-filter: blur(8px);
+      display: none; justify-content: center; align-items: center;
+      z-index: 10000;
+    }
+    .overlay .box {
+      background: #1e1e1e; border-radius: 5px; padding: 20px;
+      width: 90%; max-width: 400px;
+    }
+    .overlay .box p {
+      margin-bottom: 20px; line-height: 1.4; color: #ccc;
+    }
+    .overlay .box .btn {
+      width: 100%; padding: 12px; margin-bottom: 10px;
+      font-size: 1rem; border: none; cursor: pointer;
+      border-radius: 5px;
+    }
+    .overlay .box .btn:last-child { margin-bottom: 0 }
+    .btn-confirm { background: #27ae60; color: #fff }
+    .btn-cancel  { background: #7f8c8d; color: #fff }
+
+    /* --- Bottom Navbar --- */
+    nav.navbar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-around;
+      background: #1f1f1f; border-top: 1px solid #333;
+      box-shadow: 0 -2px 6px rgba(0,0,0,.7);
+      z-index: 1000; height: 60px;
+    }
+    nav.navbar a {
+      flex: 1; text-align: center; padding: 12px 0;
+      color: #fff; font-size: 1.5rem; position: relative;
+      transition: color .3s;
+    }
+    nav.navbar a.active, nav.navbar a:hover {
+      color: #007bff; border-top: 3px solid #007bff; font-weight: 700;
+    }
+    nav.navbar a::before {
+      content: attr(title); position: absolute; bottom: 100%;
+      left: 50%; transform: translate(-50%, -10px);
+      background: #007bff; color: #fff; padding: 3px 8px;
+      border-radius: 4px; font-size: .75rem; opacity: 0;
+      pointer-events: none; transition: opacity .3s, transform .3s;
+    }
+    nav.navbar a:hover::before, nav.navbar a.active::before {
+      opacity: 1; transform: translate(-50%, -20px); pointer-events: auto;
+    }

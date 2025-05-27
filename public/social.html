@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Raaan Store — Sosial</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="asset/css/sosial.css" />
+</head>
+<body>
+  <!-- Loader -->
+  <div class="loader-wrapper" id="loader">
+    <span class="loader"></span>
+    <div class="loader-text">Sabar ya, lagi load…</div>
+    <div class="loader-nama" id="loaderNama" style="margin-top: 10px; font-weight: bold;"></div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <a href="index.html" class="back-arrow" title="Kembali"><i class="fas fa-arrow-left"></i></a>
+    <h2>Kebutuhan Sosial Media</h2>
+  </div>
+
+  <!-- Nav -->
+ <div class="socmed-nav" id="nav-socmed">
+  <a data-platform="tiktok" class="active"><i class="fab fa-tiktok"></i> TikTok</a>
+  <a data-platform="instagram"><i class="fab fa-instagram"></i> Instagram</a>
+  <a data-platform="youtube"><i class="fab fa-youtube"></i> YouTube</a>
+</div>
+
+
+  <!-- Konten -->
+  <div class="container" id="mainContent" style="display:none;">
+    <div id="sosial-container"></div>
+  </div>
+
+  <!-- Popup Detail -->
+  <div class="overlay detail-popup" id="detailPopup">
+    <div class="box" id="detailBox"></div>
+  </div>
+
+  <!-- Popup Guide -->
+  <div class="overlay guide-popup" id="guidePopup">
+    <div class="box">
+      <h3>Panduan Transaksi</h3>
+      <ul>
+        <li>Pilih Aplikasi lalu klik Order</li>
+        <li>Selesaikan Pembayaran lewat WhatsApp admin</li>
+        <li>Setelah bayar, admin kirim detail</li>
+        <li>Transaksi selesai</li>
+      </ul>
+      <button id="guideBack" class="btn-back">Kembali</button>
+      <button id="guideOk" class="btn-yes">Ya Paham</button>
+    </div>
+  </div>
+
+  <!-- Popup Confirm -->
+  <div class="overlay confirm-popup" id="confirmPopup">
+    <div class="box">
+      <p id="confirmText"></p>
+      <button id="confirmBack" class="btn-back">Kembali</button>
+      <button id="confirmYes" class="btn-yes">Ya, aku mau😋</button>
+    </div>
+  </div>
+
+  <script src="asset/js/social.js"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Search - Random API</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #111;
+      color: #fff;
+      padding: 20px;
+      padding-bottom: 80px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    #gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 15px;
+    }
+    .img-card {
+      position: relative;
+      cursor: pointer;
+    }
+    .img-card img {
+      width: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+    #popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      backdrop-filter: blur(10px);
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 99;
+      padding: 20px;
+    }
+    #popup img {
+      max-width: 90%;
+      max-height: 70vh;
+      border-radius: 10px;
+    }
+    #popup .info {
+      margin-top: 15px;
+      text-align: center;
+    }
+    #popup button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      background: #444;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="searchInput" placeholder="Cari gambar...">
+  <div id="gallery"></div>
+
+  <div id="popup">
+    <img id="popupImg" src="">
+    <div class="info">
+      <div id="popupName"></div>
+      <button id="downloadBtn">Download</button>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('searchInput');
+    const gallery = document.getElementById('gallery');
+    const popup = document.getElementById('popup');
+    const popupImg = document.getElementById('popupImg');
+    const popupName = document.getElementById('popupName');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    let allResults = [];
+    let currentIndex = 0;
+    const perPage = 10;
+    let currentQuery = '';
+    let isFetching = false;
+
+    input.addEventListener('input', async () => {
+      const query = input.value.trim();
+      if (query.length < 2) {
+        allResults = [];
+        gallery.innerHTML = '';
+        currentIndex = 0;
+        return;
+      }
+
+      currentQuery = query;
+      currentIndex = 0;
+      allResults = [];
+      gallery.innerHTML = '';
+      await fetchAndAppendImages();
+    });
+
+    async function fetchImages(q) {
+      try {
+        const res = await fetch(`https://restapi-v2.simplebot.my.id/search/gimage?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data.status && data.result) {
+          // Hapus duplikat url
+          return [...new Set(data.result.map(img => img.url))];
+        } else {
+          return [];
+        }
+      } catch {
+        return [];
+      }
+    }
+
+    async function fetchAndAppendImages() {
+      if(isFetching) return;
+      isFetching = true;
+
+      // Kalau sudah ambil semua gambar, gak usah fetch lagi
+      if(currentIndex >= allResults.length) {
+        // Fetch new batch from API again, append ke allResults
+        const newBatch = await fetchImages(currentQuery);
+        if(newBatch.length === 0) {
+          isFetching = false;
+          return; // no more data
+        }
+        // Tambahkan yang baru dan hapus duplikat
+        allResults = [...new Set([...allResults, ...newBatch])];
+      }
+
+      // Render gambar batch perPage
+      const nextBatch = allResults.slice(currentIndex, currentIndex + perPage);
+      nextBatch.forEach((url, i) => {
+        const div = document.createElement('div');
+        div.className = 'img-card';
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'img';
+        img.onerror = () => {
+          img.src = 'https://via.placeholder.com/160x120?text=Image+Not+Found';
+        };
+        img.onclick = () => showPopup(url, currentIndex + i);
+        div.appendChild(img);
+        gallery.appendChild(div);
+      });
+
+      currentIndex += perPage;
+      isFetching = false;
+    }
+
+    // Infinite scroll trigger
+    window.addEventListener('scroll', () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
+        fetchAndAppendImages();
+      }
+    });
+
+    function showPopup(url, index) {
+      popupImg.src = url;
+      popupName.innerText = `Random gambar by Raaan Deva${index + 1}.jpg`;
+      downloadBtn.onclick = () => downloadImage(url, `Raaan Deva${index + 1}.jpg`);
+      popup.style.display = 'flex';
+    }
+
+    popup.onclick = (e) => {
+      if (e.target === popup) {
+        popup.style.display = 'none';
+      }
+    };
+
+    function downloadImage(url, filename) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  </script>
+</body>
+</html>

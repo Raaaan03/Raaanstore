@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Batch TikTok Downloader By Raaan</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 100%; height: 100%; overflow: hidden; }
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #121212;
+        color: #f0f0f0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      header, footer {
+        width: 100%;
+        max-width: 500px;
+        background: #1e1e1e;
+        padding: 1rem;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      header i, footer i {
+        position: absolute;
+        left: 1rem;
+        color: #87ceeb;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+      header span, footer span {
+        position: absolute;
+        right: 1rem;
+        font-size: 0.9rem;
+        color: #ccc;
+        opacity: 0.7;
+      }
+      header h1, footer h1 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-align: center;
+      }
+      .container {
+        flex: 1;
+        width: 100%;
+        max-width: 500px;
+        padding: 1rem;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .controls {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .controls textarea {
+        flex: 1;
+        padding: 0.6rem 0.5rem;
+        background: #222;
+        color: #eee;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        resize: none;
+      }
+      .controls button {
+        padding: 0.6rem 0.5rem;
+        background: #87ceeb;
+        color: #121212;
+        border: none;
+        border-radius: 5px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .link-tabs {
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+        margin-bottom: 1rem;
+        background: #222;
+        border-radius: 25px;
+        padding: 0.25rem;
+      }
+      .link-tabs button {
+        flex: none;
+        padding: 0.5rem 1rem;
+        background: none;
+        border: none;
+        color: #ccc;
+        cursor: pointer;
+        font-weight: 600;
+        border-radius: 20px;
+        transition: 0.3s;
+      }
+      .link-tabs button.active {
+        background: #87ceeb;
+        color: #121212;
+      }
+      .preview-container {
+        flex: 1;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .user-info {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 600px;
+        margin-bottom: 1rem;
+      }
+      .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 1rem;
+      }
+      .user-text {
+        display: flex;
+        flex-direction: column;
+      }
+      .user-text .nickname {
+        font-weight: 700;
+      }
+      .user-text .unique {
+        font-size: 0.85rem;
+        color: #ccc;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+      .song-title {
+        width: 100%;
+        max-width: 600px;
+        color: #ccc;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+        user-select: none;
+      }
+      .song-title i {
+        transition: 0.3s;
+      }
+      .song-title.playing i {
+        animation: blink 1s infinite;
+      }
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.2; }
+      }
+      .title-block {
+        width: 100%;
+        max-width: 600px;
+        margin-bottom: 1rem;
+        color: #eee;
+      }
+      .title-block button {
+        background: none;
+        border: none;
+        color: #87ceeb;
+        cursor: pointer;
+        padding: 0;
+        margin-top: 0.25rem;
+        font-size: 0.9rem;
+      }
+      .stats {
+        display: flex;
+        gap: 1rem;
+        margin: 1rem 0;
+        width: 100%;
+        max-width: 600px;
+        justify-content: center;
+      }
+      .stats .item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.9rem;
+        color: #ccc;
+      }
+      .stats .item i {
+        font-size: 1rem;
+        color: #87ceeb;
+      }
+      .preview-video {
+        width: 100%;
+        max-width: 600px;
+        margin-bottom: 0;
+      }
+      video {
+        width: 100%;
+        border-radius: 8px;
+        background: #000;
+      }
+      .image-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        width: 100%;
+        max-width: 600px;
+        margin-bottom: 1rem;
+      }
+      .image-item {
+        position: relative;
+        cursor: pointer;
+      }
+      .image-item img {
+        width: 100%;
+        border-radius: 8px;
+        display: block;
+      }
+      .image-item input[type="checkbox"] {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+      }
+      .modal {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1001;
+      }
+      .modal img {
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 8px;
+      }
+      .btn-download {
+        width: calc(100% - 2rem);
+        max-width: 600px;
+        padding: 0.8rem;
+        background: #87ceeb;
+        color: #121212;
+        text-align: center;
+        font-weight: 700;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        margin-bottom: 1rem;
+      }
+      #overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(18, 18, 18, 0.85);
+        backdrop-filter: blur(6px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        z-index: 1000;
+      }
+      .loader {
+        width: 48px; height: 48px;
+        background: #87ceeb;
+        transform: rotateX(65deg) rotate(45deg);
+        animation: layers1 1s linear infinite alternate;
+        position: relative; margin-bottom: 10px;
+      }
+      .loader::after {
+        content: "";
+        position: absolute; inset: 0;
+        background: rgba(255, 255, 255, 0.7);
+        animation: layerTr 1s linear infinite alternate;
+      }
+      .loader-text, .loader-url {
+        color: #ccc; margin-top: 5px; text-align: center;
+      }
+      @keyframes layers1 { from { box-shadow: 0 0 0 0 } to { box-shadow: 20px 20px 0 -4px } }
+      @keyframes layerTr { from { transform: translate(0, 0) scale(1) } to { transform: translate(-25px,-25px) scale(1) } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <i class="fa fa-arrow-left" onclick="history.back()"></i>
+      <h1>Tiktok Downloader</h1>
+      <span>Image & Video</span>
+    </header>
+
+    <div class="container">
+      <div class="controls">
+        <textarea
+          id="urlInput"
+          rows="1"
+          placeholder="Jika banyak link pisah pake spasi"
+        ></textarea>
+        <button onclick="onFetch()">Cari</button>
+      </div>
+      <div class="link-tabs" id="linkTabs" style="display: none"></div>
+      <div class="preview-container" id="previewArea"></div>
+    </div>
+
+    <div id="overlay">
+      <div class="loader"></div>
+      <div class="loader-text" id="loaderText">Memuat 0/0…</div>
+      <div class="loader-url" id="loaderUrl"></div>
+    </div>
+
+    <div id="modal" class="modal" onclick="closeModal()">
+      <img id="modalImg" src="" />
+    </div>
+    <audio id="musicPlayer"></audio>
+
+    <footer>
+
+      <p>Raaan Dev</p>
+
+    </footer>
+
+    <script>
+      const urlInput = document.getElementById("urlInput"),
+        linkTabs = document.getElementById("linkTabs"),
+        previewArea = document.getElementById("previewArea"),
+        overlay = document.getElementById("overlay"),
+        loaderText = document.getElementById("loaderText"),
+        loaderUrl = document.getElementById("loaderUrl"),
+        modal = document.getElementById("modal"),
+        modalImg = document.getElementById("modalImg"),
+        musicPlayer = document.getElementById("musicPlayer");
+      let entries = [], currentAudio = null;
+
+      function timestamp() {
+        const d = new Date();
+        return `${d.getHours()}${d.getMinutes()}${d.getSeconds()}_${d.getDate()}${d.getMonth()+1}${d.getFullYear()}`;
+      }
+      function showLoading(total) {
+        overlay.style.display = "flex";
+        loaderText.textContent = `Memuat 0/${total}…`;
+      }
+      function updateLoading(done, total) {
+        loaderText.textContent = `Memuat ${done}/${total}…`;
+      }
+      function hideLoading() {
+        overlay.style.display = "none";
+      }
+
+      async function onFetch() {
+        const urls = urlInput.value.trim().split(/\s+/).filter(u => u.startsWith("http"));
+        if (!urls.length) return alert("Masukin link yang valid");
+        urlInput.rows = urls.length;
+        entries = [];
+        linkTabs.innerHTML = "";
+        previewArea.innerHTML = "";
+        linkTabs.style.display = "none";
+        showLoading(urls.length);
+        for (let i = 0; i < urls.length; i++) {
+          loaderUrl.textContent = urls[i];
+          try {
+            const res = await fetch(`https://restapi-v2.simplebot.my.id/download/tiktok-v2?url=${encodeURIComponent(urls[i])}`);
+            const j = await res.json(), d = j.result.data;
+            d.mediaType = (Array.isArray(d.images) && d.images.length) ? "image" : "video";
+            entries.push(d);
+          } catch {
+            entries.push({ url: urls[i], error: true, mediaType: "video" });
+          }
+          updateLoading(i+1, urls.length);
+        }
+        hideLoading();
+        if (entries.length > 1) {
+          linkTabs.style.display = "flex";
+          entries.forEach((_, i) => {
+            const b = document.createElement("button");
+            b.textContent = "Link " + (i+1);
+            b.onclick = () => activateTab(i);
+            linkTabs.appendChild(b);
+          });
+        }
+        activateTab(0);
+        urlInput.value = "";
+        urlInput.rows = 1;
+      }
+
+      function activateTab(idx) {
+        Array.from(linkTabs.children).forEach((b, i) => b.classList.toggle("active", i===idx));
+        previewArea.innerHTML = "";
+        currentAudio = null;
+        const e = entries[idx];
+        if (e.error) {
+          previewArea.innerHTML = `<p>Gagal memuat: ${e.url}</p>`;
+          return;
+        }
+        // user-info
+        const ui = document.createElement("div");
+        ui.className = "user-info";
+        ui.innerHTML = `
+          <img src="${e.author.avatar}" class="avatar"/>
+          <div class="user-text">
+            <div class="nickname">${e.author.nickname}</div>
+            <div class="unique"><i class="fa fa-user-tag"></i> ${e.author.unique_id}</div>
+          </div>`;
+        previewArea.appendChild(ui);
+        // song title
+        if (e.music_info?.title) {
+          const st = document.createElement("div");
+          st.className = "song-title";
+          st.innerHTML = `<i class="fa fa-play"></i> ${e.music_info.title}`;
+          st.onclick = () => toggleMusic(e.music_info.play, st);
+          previewArea.appendChild(st);
+        }
+        // title-block
+        const tb = document.createElement("div");
+        tb.className = "title-block";
+        const full = e.title;
+        const short = full.length>100 ? full.slice(0,100)+"…" : full;
+        tb.innerHTML = `<div class="title-text">${short}</div>`;
+        if (full.length>100) {
+          const bt = document.createElement("button");
+          bt.textContent = "lihat selengkapnya";
+          bt.onclick = () => {
+            const t = tb.querySelector(".title-text");
+            if (bt.textContent==="lihat selengkapnya") {
+              t.textContent = full;
+              bt.textContent = "tutup selengkapnya";
+            } else {
+              t.textContent = short;
+              bt.textContent = "lihat selengkapnya";
+            }
+          };
+          tb.appendChild(bt);
+        }
+        previewArea.appendChild(tb);
+        // media preview
+        if (e.mediaType==="video") {
+          const vid = document.createElement("video");
+          vid.src = e.hdplay||e.play;
+          vid.controls = true;
+          vid.className = "preview-video";
+          previewArea.appendChild(vid);
+        } else {
+          const grid = document.createElement("div");
+          grid.className = "image-grid";
+          e.images.forEach(src=>{
+            const it = document.createElement("div");
+            it.className = "image-item";
+            it.innerHTML = `<img src="${src}" onclick="openModal('${src}')" /><input type="checkbox" data-src="${src}"/>`;
+            grid.appendChild(it);
+          });
+          previewArea.appendChild(grid);
+        }
+        // stats
+        const stats = document.createElement("div");
+        stats.className = "stats";
+        [["fa-play",e.play_count],["fa-heart",e.digg_count],["fa-comment",e.comment_count],["fa-share",e.share_count]].forEach(([ic,v])=>{
+          const it = document.createElement("div");
+          it.className="item";
+          it.innerHTML=`<i class="fa ${ic}"></i><span>${v}</span>`;
+          stats.appendChild(it);
+        });
+        previewArea.appendChild(stats);
+        // download buttons
+        if (e.mediaType==="video") {
+          previewArea.appendChild(
+            createBtn("Unduh Video", ()=>downloadBlob(e.hdplay||e.play,`TT_Video_${timestamp()}.mp4`)),
+            createBtn("Unduh Audio", ()=>downloadBlob(e.music_info.play,`TT_Audio_${timestamp()}.mp3`))
+          );
+        } else {
+          previewArea.appendChild(
+            createBtn("Download All Images", downloadAllImages),
+            createBtn("Download Selected Images", downloadSelectedImages)
+          );
+        }
+      }
+
+      function createBtn(txt, fn) {
+        const b = document.createElement("button");
+        b.className = "btn-download";
+        b.textContent = txt;
+        b.onclick = fn;
+        return b;
+      }
+
+      function toggleMusic(src, el) {
+        if (currentAudio && !currentAudio.paused) {
+          currentAudio.pause();
+          el.classList.remove("playing");
+          el.querySelector("i").className="fa fa-play";
+        } else {
+          if (!currentAudio) {
+            currentAudio = new Audio(src);
+            currentAudio.onended = ()=>{
+              el.classList.remove("playing");
+              el.querySelector("i").className="fa fa-play";
+            };
+          }
+          currentAudio.play();
+          el.classList.add("playing");
+          el.querySelector("i").className="fa fa-pause";
+        }
+      }
+
+      function openModal(src) {
+        modalImg.src = src;
+        modal.style.display = "flex";
+      }
+      function closeModal() {
+        modal.style.display = "none";
+        modalImg.src = "";
+      }
+
+      async function downloadBlob(url, name) {
+        showLoading(entries.length);
+        try {
+          const b = await fetch(url).then(r=>r.blob());
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(b);
+          a.download = name;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        } catch {
+          alert("Gagal download");
+        }
+        hideLoading();
+      }
+
+      async function downloadAllImages() {
+        const zip = new JSZip();
+        entries.forEach(e=>{
+          if (Array.isArray(e.images)) {
+            e.images.forEach(src=>{
+              fetch(src)
+                .then(r=>r.blob())
+                .then(b=>zip.file(`TT_Image_${timestamp()}.jpg`, b))
+                .catch(()=>{});
+            });
+          }
+        });
+        const blob = await zip.generateAsync({type:"blob"});
+        saveAs(blob, `TT_All_Images_${timestamp()}.zip`);
+      }
+
+      async function downloadSelectedImages() {
+        const cbs = document.querySelectorAll(".image-item input:checked");
+        if (!cbs.length) return alert("Pilih minimal satu gambar");
+        const zip = new JSZip();
+        cbs.forEach(cb=>{
+          const src = cb.dataset.src;
+          fetch(src)
+            .then(r=>r.blob())
+            .then(b=>zip.file(`TT_Selected_${timestamp()}.jpg`, b))
+            .catch(()=>{});
+        });
+        const blob = await zip.generateAsync({type:"blob"});
+        saveAs(blob, `TT_Selected_Images_${timestamp()}.zip`);
+      }
+    </script>
+  </body>
+</html>

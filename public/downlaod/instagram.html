@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Instagram Reels Downloader</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #121212;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+    header, footer {
+      width: 100%;
+      max-width: 500px;
+      background: #1e1e1e;
+      padding: 1rem;
+    }
+    header {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    }
+    header i {
+      position: absolute;
+      left: 1rem;
+      color: #87ceeb;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    header span {
+      position: absolute;
+      right: 1rem;
+      font-size: 0.9rem;
+      color: #ccc;
+      opacity: 0.7;
+    }
+    header h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    .container {
+      flex: 1;
+      width: 100%;
+      max-width: 500px;
+      padding: 1rem;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .controls {
+      display: flex;
+      gap: .5rem;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    .controls input {
+      flex: 1;
+      padding: .6rem .8rem;
+      background: #222;
+      color: #eee;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    .controls button {
+      padding: .6rem 1rem;
+      background: #87CEEB;
+      color: #121212;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .preview-container {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .preview-container.active {
+      display: flex;
+    }
+    .preview-media {
+      width: 100%;
+      border-radius: 8px;
+      background: #000;
+    }
+    .download-btn {
+      width: 100%;
+      padding: .8rem;
+      background: #87CEEB;
+      color: #121212;
+      text-align: center;
+      font-weight: 700;
+      border: none;
+      border-radius: 25px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    #overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(18,18,18,0.85);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 1000;
+    }
+    .loader {
+      width: 48px;
+      height: 48px;
+      background: #87CEEB;
+      transform: rotateX(65deg) rotate(45deg);
+      animation: layers1 1s linear infinite alternate;
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .loader::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.7);
+      animation: layerTr 1s linear infinite alternate;
+    }
+    .loader-text, .loader-url {
+      color: #ccc;
+      margin-top: 5px;
+      text-align: center;
+    }
+    @keyframes layers1 {
+      from { box-shadow: 0 0 0 0 }
+      to   { box-shadow: 20px 20px 0 -4px }
+    }
+    @keyframes layerTr {
+      from { transform: translate(0,0) scale(1) }
+      to   { transform: translate(-25px,-25px) scale(1) }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <i class="fa fa-arrow-left" onclick="history.back()"></i>
+    <h1>TInstagram Reels Downloader</h1>
+    <span> Video</span>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <input id="inputLink" placeholder="Link Instagram Reels..." />
+      <button id="btnPreview">Cari</button>
+    </div>
+
+    <div class="preview-container" id="previewArea">
+      <video id="videoPlayer" controls class="preview-media"></video>
+      <a id="btnVideo" class="download-btn">Unduh Video</a>
+      <a id="btnAudio" class="download-btn">Unduh Audio</a>
+    </div>
+  </div>
+
+  <div id="overlay">
+    <div class="loader"></div>
+    <div class="loader-text" id="loaderText">Memuat…</div>
+    <div class="loader-url" id="loaderUrl"></div>
+  </div>
+
+  <footer>Raaan Dev</footer>
+
+  <script>
+    const inputLink   = document.getElementById('inputLink'),
+          btnPreview  = document.getElementById('btnPreview'),
+          previewArea = document.getElementById('previewArea'),
+          videoPlayer = document.getElementById('videoPlayer'),
+          btnVideo    = document.getElementById('btnVideo'),
+          btnAudio    = document.getElementById('btnAudio'),
+          overlay     = document.getElementById('overlay'),
+          loaderUrl   = document.getElementById('loaderUrl');
+
+    function showLoading(url) {
+      overlay.style.display = 'flex';
+      loaderUrl.textContent = url;
+    }
+    function hideLoading() {
+      overlay.style.display = 'none';
+    }
+
+    async function fetchReels() {
+      const url = inputLink.value.trim();
+      if (!url) return alert('Masukkan link Reels yang valid!');
+      showLoading(url);
+      try {
+        const res  = await fetch(`https://fastrestapis.fasturl.cloud/downup/igdown?url=${encodeURIComponent(url)}`);
+        const j    = await res.json();
+        const item = j.result.data?.[0];
+        if (!item?.url) throw new Error();
+        return item.url;
+      } catch {
+        alert('Gagal memuat Reels!');
+        return null;
+      } finally {
+        hideLoading();
+      }
+    }
+
+    btnPreview.onclick = async () => {
+      const videoUrl = await fetchReels();
+      if (!videoUrl) return;
+      videoPlayer.src     = videoUrl;
+      btnVideo.href       = videoUrl;
+      btnVideo.download   = 'Downlaoder reels instgram By Raaan Dev.mp4';
+      btnAudio.href       = videoUrl;
+      btnAudio.download   = ' Downlaoder reels Instagram By Raaan Dev.mp3';
+      previewArea.classList.add('active');
+    };
+  </script>
+</body>
+</html>

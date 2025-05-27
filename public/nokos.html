@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Raaan Store — NoKos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="asset/css/nokos.css">
+<script src="asset/js/nokos.js"></script>
+</head>
+
+<div class="loader-wrapper" id="loader">
+  <span class="loader"></span>
+  <div class="loader-text">Sbr y, lgi load…</div>
+</div>
+
+  <div class="container" id="mainContent">
+    <div class="header">
+      <a href="index.html" class="back-arrow" title="Kembali">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <h2>Nokos ( All layanan)</h2>
+    </div>
+    <div class="search-bar">
+      <input id="search-negara" placeholder="Cari negara…" />
+      <input id="search-layanan" placeholder="Cari layanan…" />
+    </div>
+    <div class="country-bar" id="country-bar"></div>
+    <div class="service-bar" id="service-bar"></div>
+  <div id="pagination-wrapper">
+  <div id="pagination"></div>
+</div>
+
+    <div class="premium-grid" id="nokos-grid"></div>
+  </div>
+
+  <!-- Popup 1: Detail -->
+  <div class="overlay detail-popup" id="detailPopup">
+    <div class="box" id="detailBox"></div>
+  </div>
+  <!-- Popup 2: Guide -->
+  <div class="overlay guide-popup" id="guidePopup">
+    <div class="box">
+      <h3>Panduan Transaksi</h3>
+      <ul>
+        <li><span class="dot"></span> Pilih  Nomor lalu pilih Negara yang diinginkan</li>
+        <li><span class="dot"></span> Pilih Layanan yang ingin digunakan</li>
+        <li><span class="dot"></span> Klik tombol Order jika yakin ingin  membelinya </li>
+        <li><span class="dot"></span> Selesaikan Pembayaran, Lewat Nomor whatsapps admin</li>
+        <li><span class="dot"></span> Setelah Selesai Membayar admin akan memberikan nomor nya </li>
+        <li><span class="dot"></span> Kirim OTP SMS ke nomor yang sudah didapatkan</li>
+        <li><span class="dot"></span> Admin kasih otp kode nya (harap Tidak spam OTP) </li>
+        <li><span class="dot"></span> Transaksi Selesai</li>
+      </ul>
+      <button id="guideBack" class="btn-back">Kembali</button>
+      <button id="guideOk" class="btn-yes">Ya Paham</button>
+    </div>
+  </div>
+  <!-- Popup 3: Confirm -->
+  <div class="overlay confirm-popup" id="confirmPopup">
+    <div class="box">
+      <p id="confirmText"></p>
+      <button id="confirmBack" class="btn-back">Kembali</button>
+      <button id="confirmYes" class="btn-yes">Ya aku mw😋</button>
+    </div>
+  </div>
+  <!-- Country/Service selection popup -->
+  <div class="overlay" id="popup">
+    <div class="box inner" id="popupList"></div>
+  </div>
+
+
+
+  
+</body></html>

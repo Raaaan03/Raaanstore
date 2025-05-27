@@ -1,0 +1,135 @@
+/* --- Reset & Layout --- */
+    html, body {
+      margin: 0; padding: 0; overflow-x: hidden;
+      background: #0d0d0d; color: #fff;
+      user-select: none; touch-action: manipulation;
+      font-family: 'Inter', sans-serif;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* --- Header flex: arrow + title --- */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      background: rgba(0,0,0,.5);
+      backdrop-filter: blur(8px);
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      z-index: 1000;
+    }
+    .header .back-arrow {
+      font-size: 1.4rem; padding: 6px; color: white;
+      border-radius: 4px; transition: background .2s;
+    }
+    .header .back-arrow:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .header h2 {
+      margin: 0; font-size: 1.25rem; font-weight: 700;
+    }
+
+    .container {
+      max-width: 500px; margin: 0 auto 100px;
+      padding-top: 60px;  /* ruang untuk header */
+      display: none;
+      
+    }
+
+    /* --- Loader --- */
+    .loader-wrapper {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(18,18,18,.85);
+      backdrop-filter: blur(6px);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      z-index: 11000;
+    }
+    .loader {
+      width: 48px; height: 48px; background: #1313f9;
+      transform: rotateX(65deg) rotate(45deg);
+      animation: layers1 1s linear infinite alternate;
+      position: relative; margin-bottom: 10px;
+    }
+    .loader::after {
+      content: ""; position: absolute; inset: 0;
+      background: rgba(255,255,255,.7);
+      animation: layerTr 1s linear infinite alternate;
+    }
+    @keyframes layers1 {
+      0% { box-shadow: 0 0 0 0 }
+      100% { box-shadow: 20px 20px 0 -4px }
+    }
+    @keyframes layerTr {
+      0% { transform: translate(0,0) scale(1) }
+      100% { transform: translate(-25px,-25px) scale(1) }
+    }
+    .loader-text {
+      font-size: .9rem; color: #ccc; text-align: center;
+    }
+
+    /* --- Fade In --- */
+    @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+
+    /* --- Grid & Items --- */
+    .premium-grid {
+      margin: 20px;
+    }
+    .section-title {
+      font-size: 1.2rem; margin: 20px 0 8px;
+      padding-left: 4px; border-left: 4px solid #1313f9;
+    }
+    .premium-grid-inner {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(45%,1fr));
+      gap: 15px;
+    }
+    .premium-item {
+      background: #242323; border-radius: 8px;
+      font-size: .9rem; padding: 12px 14px;
+      cursor: pointer;
+    }
+    .premium-item h3 {
+      font-size: 1rem; margin: -2px 0 8px;
+            opacity: 0; animation: fadeIn .5s forwards;
+    }
+    .premium-price {
+      display: flex; justify-content: space-between;
+      border-top: 1px solid #333; margin-top: 6px; padding-top: 6px;
+            opacity: 0; animation: fadeIn .5s forwards;
+    }
+
+    /* --- Overlays & Boxes --- */
+    .overlay {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,.5); backdrop-filter: blur(8px);
+      display: none; justify-content: center; align-items: center;
+      z-index: 10000;
+            transform: translateY(20px);
+      animation: slideUp 40.5s forwards;
+    }
+    .overlay .box {
+      position: fixed; bottom: 49px; left: 50%;
+      transform: translateX(-50%);
+      background: #1e1e1e; border-radius: 10px 10px 0 0;
+      padding: 20px; width: 80%; max-height: 100vh; overflow: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,.7); z-index: 10001;
+    }
+    .overlay .box h3 {
+      text-align: center; margin-bottom: 15px; font-size: 1.2rem;
+    }
+    .overlay .box p, .overlay .box ul {
+      color: #ccc; margin-bottom: 15px; line-height: 1.4;
+    }
+    .overlay .box button {
+      display: block; width: 100%; margin-bottom: 10px;
+      padding: 12px; font-size: 1rem; border: none;
+      border-radius: 25px; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .overlay .btn-back    { background: #7f8c8d; color: #fff; }
+    .overlay .btn-order   { background: #27ae60; color: #fff; }
+    .overlay .btn-yes     { background: #c0392b; color: #fff; }

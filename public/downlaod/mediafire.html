@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MediaFire Downloader</title>
+<style>
+  body{margin:0;font-family:sans-serif;background:#121212;color:#eee;display:flex;flex-direction:column;align-items:center;padding:2rem;}
+  h1{margin-bottom:1rem;}
+  .input-group{display:flex;gap:.5rem;width:100%;max-width:600px;}
+  input{flex:1;padding:.6rem 1rem;border:none;border-radius:6px;background:#222;color:#eee;}
+  button{padding:.6rem 1.2rem;border:none;border-radius:6px;background:#1db954;color:#111;cursor:pointer;}
+  .preview{margin-top:1rem;width:100%;max-width:600px;}
+  .download-btn{display:inline-block;margin-top:1rem;padding:.6rem 1.5rem;border-radius:6px;background:#1db954;color:#111;text-decoration:none;font-weight:700;}
+  #info{margin-top:1rem;background:#222;padding:1rem;border-radius:8px;}
+  #toast{position:fixed;top:1rem;right:1rem;padding:.8rem 1.2rem;border-radius:6px;opacity:0;transition:opacity .3s;}
+  #toast.show{opacity:1;}
+  #toast.loading{background:#555;}
+  #toast.success{background:#1db954;}
+  #toast.error{background:#e03e3e;}
+</style>
+</head>
+<body>
+<h1>MediaFire Downloader</h1>
+<div class="input-group">
+  <input id="inputLink" placeholder="Masukkan link MediaFire..." />
+  <button id="btnFetch">Download</button>
+</div>
+<div id="info" style="display:none;"></div>
+<a id="downloadBtn" class="download-btn" style="display:none;">Unduh File</a>
+<div id="toast"></div>
+<script>
+  const toast = document.getElementById('toast');
+  function showToast(msg, type) {
+    toast.textContent = msg;
+    toast.className = 'show ' + type;
+    setTimeout(() => { toast.className = ''; }, 2500);
+  }
+  async function fetchFile() {
+    const url = document.getElementById('inputLink').value.trim();
+    if (!url) { showToast('URL kosong','error'); return; }
+    showToast('Loading...','loading');
+    try {
+      const res = await fetch('https://r.jina.ai/'+url, { headers:{ 'x-return-format':'html' } });
+      const txt = await res.text();
+      const dom = new DOMParser().parseFromString(txt,'text/html');
+      const btn = dom.querySelector('a#downloadButton');
+      const title = dom.querySelector('div.dl-btn-label')?.textContent.trim()||'file';
+      if(!btn?.href) throw '';
+      document.getElementById('info').textContent = title;
+      document.getElementById('info').style.display='block';
+      const dl = document.getElementById('downloadBtn');
+      dl.href = btn.href; dl.download = title; dl.style.display='inline-block';
+      showToast('Berhasil!','success');
+    } catch {
+      showToast('Gagal mengambil link','error');
+    }
+  }
+  document.getElementById('btnFetch').onclick = fetchFile;
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Raaan Store — Premium</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- Custom Styles & Scripts -->
+  <link rel="stylesheet" href="asset/css/apkpremium.css" />
+  <script src="asset/js/apkpremium.js" defer></script>
+</head>
+<body>
+  <!-- Loader -->
+  <div class="loader-wrapper" id="loader">
+    <div class="loader"></div>
+    <div class="loader-text">Tunggu, sedang memuat data…</div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container" id="mainContent">
+    <div class="header">
+      <a href="index.html" class="back-arrow" title="Kembali">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <h2>Premium Bulanan</h2>
+    </div>
+    <div class="premium-grid" id="premium-grid"></div>
+  </div>
+
+  <!-- Detail Popup -->
+  <div class="overlay detail-popup" id="detailPopup">
+    <div class="box" id="detailBox"></div>
+  </div>
+
+  <!-- Guide Popup -->
+  <div class="overlay guide-popup" id="guidePopup">
+    <div class="box">
+      <h3>Panduan Transaksi</h3>
+      <ul>
+        <li>Pilih aplikasi lalu klik Order</li>
+        <li>Selesaikan pembayaran lewat WhatsApp admin</li>
+        <li>Setelah bayar, admin kirim detail</li>
+        <li>Transaksi selesai</li>
+      </ul>
+      <button id="guideBack" class="btn-back">Kembali</button>
+      <button id="guideOk" class="btn-yes">Ya Paham</button>
+    </div>
+  </div>
+
+  <!-- Confirm Popup -->
+  <div class="overlay confirm-popup" id="confirmPopup">
+    <div class="box">
+      <p id="confirmText"></p>
+      <button id="confirmBack" class="btn-back">Kembali</button>
+      <button id="confirmYes" class="btn-yes">Ya, aku mau 😋</button>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Stalker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: sans-serif;
+      margin: 0;
+      padding-bottom: 60px;
+    }
+
+    .wrapper {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 0;
+      border-bottom: 1px solid #222;
+    }
+
+    .header i {
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .header div {
+      font-weight: bold;
+    }
+
+    .container, .input-container {
+      background: #111;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 8px #333;
+    }
+
+    .top-info {
+      display: none;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .username {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .realname {
+      color: #ccc;
+      font-size: 15px;
+    }
+
+    .stats {
+      display: none;
+      justify-content: space-around;
+      margin: 20px 0 10px;
+      text-align: center;
+    }
+
+    .stat {
+      font-size: 14px;
+    }
+
+    .stat .value {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .bio {
+      display: none;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      background: #222;
+      color: #fff;
+      border: 1px solid #444;
+      box-sizing: border-box;
+    }
+
+ footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #1c1c1e;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      color: #888;
+    }
+
+    #loadingText {
+      margin-top: 20px;
+      text-align: center;
+      font-style: italic;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="header">
+      <i class="fas fa-arrow-left" onclick="history.back()"></i>
+      <div onclick="history.back()">Stalker Instagram</div>
+    </div>
+
+    <div id="inputContainer" class="input-container">
+      <input type="text" id="iguser" placeholder="Username IG atau link profil...">
+    </div>
+
+    <div id="loadingText"></div>
+
+    <div id="topInfoContainer" class="container" style="display:none;">
+      <div id="top-info" class="top-info">
+        <div class="avatar" id="avatar"></div>
+        <div class="user-info">
+          <div class="username" id="username"></div>
+          <div class="realname" id="realname"></div>
+        </div>
+      </div>
+
+      <div class="stats" id="stats">
+        <div class="stat">
+          <div class="value" id="posts">0</div>
+          <div>postingan</div>
+        </div>
+        <div class="stat">
+          <div class="value" id="followers">0</div>
+          <div>pengikut</div>
+        </div>
+        <div class="stat">
+          <div class="value" id="following">0</div>
+          <div>mengikuti</div>
+        </div>
+      </div>
+
+      <div class="bio" id="bio"></div>
+    </div>
+  </div>
+
+  <footer>Made with <span style="color:#0ff;">Raaan</span> Dev</footer>
+
+  <script>
+    function extractUsername(input) {
+      try {
+        const url = new URL(input);
+        if (url.hostname.includes("instagram.com")) {
+          const path = url.pathname.split("/");
+          return path[1] || null;
+        }
+      } catch {
+        return input.replace("@", "").trim();
+      }
+    }
+
+    async function stalkIG(username) {
+      const loading = document.getElementById("loadingText");
+      const topInfo = document.getElementById("top-info");
+      const stats = document.getElementById("stats");
+      const bio = document.getElementById("bio");
+      const container = document.getElementById("topInfoContainer");
+      const inputWrap = document.getElementById("inputContainer");
+
+      topInfo.style.display = "none";
+      stats.style.display = "none";
+      bio.style.display = "none";
+      loading.innerText = "Mencari user...";
+      container.style.display = "none";
+
+      try {
+        const res = await fetch(`https://restapi-v2.simplebot.my.id/stalk/instagram?user=${username}`);
+        const data = await res.json();
+
+        if (!data.status) {
+          loading.innerText = "Akun tidak ditemukan.";
+          return;
+        }
+
+        const u = data.result;
+
+        document.getElementById("avatar").style.backgroundImage = `url('${u.avatar}')`;
+        document.getElementById("username").innerText = u.username.replace("@", "");
+        document.getElementById("realname").innerText = u.name;
+        document.getElementById("posts").innerText = u.posts || "0";
+        document.getElementById("followers").innerText = u.followers;
+        document.getElementById("following").innerText = u.following;
+        document.getElementById("bio").innerText = u.bio;
+
+        loading.innerText = "";
+        topInfo.style.display = "flex";
+        stats.style.display = "flex";
+        bio.style.display = "block";
+        container.style.display = "block";
+
+        // Pindahkan input ke bawah data
+        container.insertAdjacentElement("afterend", inputWrap);
+      } catch (e) {
+        loading.innerText = "Gagal ambil data!";
+        console.error(e);
+      }
+    }
+
+    const input = document.getElementById("iguser");
+    let timer;
+    input.addEventListener("input", () => {
+      clearTimeout(timer);
+      const val = extractUsername(input.value);
+      if (!val) return;
+      timer = setTimeout(() => stalkIG(val), 800);
+    });
+  </script>
+</body>
+</html>
